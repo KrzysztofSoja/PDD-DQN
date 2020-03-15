@@ -19,3 +19,7 @@ class Sample:
         return 's: ' + str(self.state) + ', a: ' + str(self.action) \
                 + ', s\': ' + str(self.next_state) + ', r: ' + str(self.reward) \
                 + ', done: ' + str(self.next_sample is None)
+
+    def is_done(self):
+        """ Is last state in game. """
+        return self.next_sample is None
