@@ -9,14 +9,13 @@ from keras_models.dueling_layer import DuelingLayer
 
 environment = gym.make('CartPole-v1')
 
-model = K.models.Sequential([
-    K.layers.Dense(units=32, input_dim=4),
-    K.layers.LeakyReLU(alpha=0.3),
-    DuelingLayer(actions=2, units=16)
-])
+input = K.layers.Input(shape=(4,))
+layer = K.layers.Dense(units=32, input_dim=4)(input)
+activation = K.layers.LeakyReLU(alpha=0.3)(layer)
+dueling = DuelingLayer(actions=2, units=16)(activation)
+model = K.models.Model(input, dueling)
 
-
-policy = Greedy
+policy = Greedy()
 memory = QueueMemory(size=20_000)
 agent = Agent(environment=environment,
               memory=memory,

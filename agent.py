@@ -15,7 +15,7 @@ class Agent:
                  policy: AbstractPolicy,
                  model: K.Model,
                  gamma: float,
-                 n_step: int):
+                 n_step: int = 1):
         self.environment = environment
         self.memory = memory
         self.policy = policy
@@ -24,6 +24,8 @@ class Agent:
 
         self.gamma = gamma
         self.n_step = n_step
+
+        self.history = []
 
     def _explore_env(self, batch_size: int) -> Tuple[float, List[Sample]]:
         """ Return tuple of mean gain from all games and list of samples. """
@@ -86,7 +88,7 @@ class Agent:
             print("Epoch: ", epoch)
 
             if epoch % change_model_delay == 0:
-                self.model = K.models.clone_model(self.current_model.model)
+                self.model = K.models.clone_model(self.current_model)
                 self.model.compile(loss='MSE', optimizer=K.optimizers.RMSprop(lr=learning_rate))
 
             eval_score, batch = self._explore_env(batch_size)

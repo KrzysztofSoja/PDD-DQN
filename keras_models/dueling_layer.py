@@ -13,6 +13,11 @@ class DuelingLayer(K.layers.Layer):
         self.list_a = [K.layers.Dense(units=1, activation='linear', input_dim=units)
                        for _ in range(actions)]
 
+        self.average = K.layers.Average()
+        self.concat = K.layers.Concatenate()
+        self.add = K.layers.Add()
+        self.aggregation_layer = K.layers.Subtract()
+
         super(DuelingLayer, self).__init__()
 
     def __call__(self, input):
@@ -24,9 +29,9 @@ class DuelingLayer(K.layers.Layer):
         a = self.a_activation(a)
         a = [a_output(a) for a_output in self.list_a]
 
-        average = K.layers.Average()(a)
-        concat = K.layers.Concatenate()(a)
-        add = K.layers.Add()([v, concat])
-        aggregation_layer = K.layers.Subtract()([add, average])
+        average = self.average(a)
+        a = self.concat(a)
+        a = self.add([v, a])
+        a = self.aggregation_layer([a, average])
 
-        return aggregation_layer
+        return a
