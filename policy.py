@@ -14,4 +14,4 @@ class AbstractPolicy:
 class Greedy(AbstractPolicy):
 
     def __call__(self, q_values: np.ndarray) -> int:
-        return np.argmax(q_values)[0]
+        return np.argmax(q_values)

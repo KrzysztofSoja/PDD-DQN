@@ -5,7 +5,9 @@ from gym.core import Env
 from memory import AbstractMemory
 from policy import AbstractPolicy
 from sample import Sample
+from model_wrapper import ModelWrapper
 from typing import List, Tuple
+from tqdm import tqdm
 
 
 class Agent:
@@ -15,11 +17,13 @@ class Agent:
                  policy: AbstractPolicy,
                  model: K.Model,
                  gamma: float,
+                 optimizer: K.optimizers.Optimizer,
                  n_step: int = 1):
         self.environment = environment
         self.memory = memory
         self.policy = policy
-        self.model = model
+
+        self.model = ModelWrapper(model, optimizer)
         self.current_model = None
 
         self.gamma = gamma
@@ -59,7 +63,7 @@ class Agent:
                 state = next_state
 
         self.environment.close()
-        return np.mean(gains)[0], data
+        return np.mean(gains), data
 
     def _bellman_equation(self, batch: List[Sample]) -> np.ndarray:
         state = np.array([sample.state for sample in batch])
@@ -76,20 +80,21 @@ class Agent:
 
     def learn(self, epochs: int,
               batch_size: int,
-              change_model_delay: int,
-              learning_rate: float):
+              change_model_delay: int):
 
-        self.model.compile(loss='MSE', optimizer=K.optimizers.RMSprop(lr=learning_rate))
-        self.current_model = K.models.clone_model(self.model)
-        self.current_model.compile(loss='MSE', optimizer=K.optimizers.RMSprop(lr=learning_rate))
+        self.model.compile()
+        self.current_model = self.model.clone()
+        self.current_model.compile()
+
+        _, starting_experience = self._explore_env(self.memory.maxlen)
+        self.memory.add(starting_experience)
 
         history = []
-        for epoch in range(epochs):
-            print("Epoch: ", epoch)
+        for epoch in tqdm(range(epochs), desc='Learning in progress: '):
 
             if epoch % change_model_delay == 0:
-                self.model = K.models.clone_model(self.current_model)
-                self.model.compile(loss='MSE', optimizer=K.optimizers.RMSprop(lr=learning_rate))
+                self.model = self.current_model.clone()
+                self.model.compile()
 
             eval_score, batch = self._explore_env(batch_size)
             self.memory.add(batch)
@@ -97,5 +102,5 @@ class Agent:
 
             q_values = self._bellman_equation(batch)
             state = np.array([sample.state for sample in batch])
-            loss = self.current_model.fit(state, q_values, batch_size=batch_size)
-            history.append({'loss': loss.history['loss'], 'eval_score': eval_score})
+            loss = self.current_model.fit(state, q_values)
+            history.append({'loss': loss, 'eval_score': eval_score})

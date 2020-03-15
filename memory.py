@@ -7,6 +7,9 @@ from collections import deque
 
 class AbstractMemory:
 
+    def __init__(self, maxlen: int):
+        self.maxlen = maxlen
+
     def sample(self, batch_size: int) -> List[Sample]:
         raise NotImplementedError
 
@@ -16,9 +19,9 @@ class AbstractMemory:
 
 class QueueMemory(AbstractMemory):
 
-    def __init__(self, size: int):
-        super(QueueMemory, self).__init__()
-        self.queue = deque(maxlen=size)
+    def __init__(self, maxlen: int):
+        super(QueueMemory, self).__init__(maxlen)
+        self.queue = deque(maxlen=maxlen)
 
     def sample(self, batch_size: int) -> List[Sample]:
         return rand.sample(self.queue, k=batch_size)

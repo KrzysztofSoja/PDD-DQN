@@ -15,13 +15,16 @@ activation = K.layers.LeakyReLU(alpha=0.3)(layer)
 dueling = DuelingLayer(actions=2, units=16)(activation)
 model = K.models.Model(input, dueling)
 
+optimizer = K.optimizers.RMSprop(learning_rate=0.0005)
+
 policy = Greedy()
-memory = QueueMemory(size=20_000)
+memory = QueueMemory(maxlen=20_000)
 agent = Agent(environment=environment,
               memory=memory,
               model=model,
               policy=policy,
               gamma=0.85,
+              optimizer= optimizer,
               n_step=1)
 
-agent.learn(epochs=200, batch_size=512, change_model_delay=120, learning_rate=0.0005)
+agent.learn(epochs=1000, batch_size=512, change_model_delay=120)
