@@ -4,6 +4,9 @@ from sample import Sample
 from typing import List
 from collections import deque
 
+from keras import Model
+from bintrees import FastAVLTree
+
 
 class AbstractMemory:
 
@@ -29,3 +32,18 @@ class QueueMemory(AbstractMemory):
     def add(self, samples: List[Sample]):
         for sample in samples:
             self.queue.append(sample)
+
+
+class PrioritizedExperienceReplay(AbstractMemory):
+
+    def __init__(self, maxlen: int, model: Model):
+        super(PrioritizedExperienceReplay, self).__init__(maxlen)
+        self.model = model
+        self.tree = FastAVLTree()
+
+    def sample(self, batch_size: int) -> List[Sample]:
+        pass
+
+    def add(self, samples: List[Sample]):
+        pass
+

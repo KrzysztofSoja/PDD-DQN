@@ -18,7 +18,7 @@ model = K.models.Model(input, dueling)
 optimizer = K.optimizers.RMSprop(learning_rate=0.0005)
 
 policy = Greedy()
-memory = QueueMemory(maxlen=20_000)
+memory = QueueMemory(maxlen=4_000)
 agent = Agent(environment=environment,
               memory=memory,
               model=model,
@@ -27,4 +27,4 @@ agent = Agent(environment=environment,
               optimizer= optimizer,
               n_step=1)
 
-agent.learn(epochs=1000, batch_size=512, change_model_delay=120)
+agent.learn(epochs=100, batch_size=512, change_model_delay=15)

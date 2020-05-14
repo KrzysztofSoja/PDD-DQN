@@ -104,3 +104,4 @@ class Agent:
             state = np.array([sample.state for sample in batch])
             loss = self.current_model.fit(state, q_values)
             history.append({'loss': loss, 'eval_score': eval_score})
+            print(eval_score)
