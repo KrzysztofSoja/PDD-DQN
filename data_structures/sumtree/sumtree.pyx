@@ -80,7 +80,7 @@ cdef class SumTree:
             self.elements_in_tree = 0
         self.items[self.elements_in_tree] = item
 
-        cdef int idx = self.number_of_nodes - self.elements_in_tree - 1
+        cdef int idx = self.capacity + self.elements_in_tree - 1
         cdef int update = key - self.tree[idx]
 
         self._back_propagate(update, idx)
@@ -94,7 +94,7 @@ cdef class SumTree:
         """
         cdef int parent = 0
         cdef int left_child = 2*parent + 1
-        cdef int right_child = 2*parent + 2
+        cdef int right_child = left_child + 1
 
         while parent < self.first_leaf_idx:
             if key <= self.tree[left_child]:

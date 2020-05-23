@@ -1167,21 +1167,11 @@ static void __Pyx_AddTraceback(const char *funcname, int c_line,
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
-/* Print.proto */
-static int __Pyx_Print(PyObject*, PyObject *, int);
-#if CYTHON_COMPILING_IN_PYPY || PY_MAJOR_VERSION >= 3
-static PyObject* __pyx_print = 0;
-static PyObject* __pyx_print_kwargs = 0;
-#endif
-
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
-
-/* PrintOne.proto */
-static int __Pyx_PrintOne(PyObject* stream, PyObject *o);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
@@ -1223,10 +1213,8 @@ static PyObject *__pyx_builtin_object;
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_TypeError;
 static const char __pyx_k_np[] = "np";
-static const char __pyx_k_end[] = "end";
 static const char __pyx_k_get[] = "get";
 static const char __pyx_k_key[] = "key";
-static const char __pyx_k_file[] = "file";
 static const char __pyx_k_item[] = "item";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_name[] = "__name__";
@@ -1235,7 +1223,6 @@ static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_dtype[] = "dtype";
 static const char __pyx_k_empty[] = "empty";
 static const char __pyx_k_numpy[] = "numpy";
-static const char __pyx_k_print[] = "print";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_zeros[] = "zeros";
 static const char __pyx_k_import[] = "__import__";
@@ -1262,8 +1249,6 @@ static PyObject *__pyx_n_s_capacity;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_dtype;
 static PyObject *__pyx_n_s_empty;
-static PyObject *__pyx_n_s_end;
-static PyObject *__pyx_n_s_file;
 static PyObject *__pyx_n_s_get;
 static PyObject *__pyx_n_s_getstate;
 static PyObject *__pyx_n_s_import;
@@ -1275,7 +1260,6 @@ static PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
 static PyObject *__pyx_n_s_np;
 static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_n_s_object;
-static PyObject *__pyx_n_s_print;
 static PyObject *__pyx_n_s_pyx_vtable;
 static PyObject *__pyx_n_s_rand;
 static PyObject *__pyx_n_s_randint;
@@ -1856,22 +1840,22 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_4add(struct __pyx_obj_7sumtree_SumTr
  *             self.elements_in_tree = 0
  *         self.items[self.elements_in_tree] = item             # <<<<<<<<<<<<<<
  * 
- *         cdef int idx = self.number_of_nodes - self.elements_in_tree - 1
+ *         cdef int idx = self.capacity + self.elements_in_tree - 1
  */
   if (unlikely(__Pyx_SetItemInt(__pyx_v_self->items, __pyx_v_self->elements_in_tree, __pyx_v_item, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 81, __pyx_L1_error)
 
   /* "sumtree.pyx":83
  *         self.items[self.elements_in_tree] = item
  * 
- *         cdef int idx = self.number_of_nodes - self.elements_in_tree - 1             # <<<<<<<<<<<<<<
+ *         cdef int idx = self.capacity + self.elements_in_tree - 1             # <<<<<<<<<<<<<<
  *         cdef int update = key - self.tree[idx]
  * 
  */
-  __pyx_v_idx = ((__pyx_v_self->number_of_nodes - __pyx_v_self->elements_in_tree) - 1);
+  __pyx_v_idx = ((__pyx_v_self->capacity + __pyx_v_self->elements_in_tree) - 1);
 
   /* "sumtree.pyx":84
  * 
- *         cdef int idx = self.number_of_nodes - self.elements_in_tree - 1
+ *         cdef int idx = self.capacity + self.elements_in_tree - 1
  *         cdef int update = key - self.tree[idx]             # <<<<<<<<<<<<<<
  * 
  *         self._back_propagate(update, idx)
@@ -1950,7 +1934,7 @@ static PyObject *__pyx_f_7sumtree_7SumTree__go_to_leaf(struct __pyx_obj_7sumtree
  *         """
  *         cdef int parent = 0             # <<<<<<<<<<<<<<
  *         cdef int left_child = 2*parent + 1
- *         cdef int right_child = 2*parent + 2
+ *         cdef int right_child = left_child + 1
  */
   __pyx_v_parent = 0;
 
@@ -1958,7 +1942,7 @@ static PyObject *__pyx_f_7sumtree_7SumTree__go_to_leaf(struct __pyx_obj_7sumtree
  *         """
  *         cdef int parent = 0
  *         cdef int left_child = 2*parent + 1             # <<<<<<<<<<<<<<
- *         cdef int right_child = 2*parent + 2
+ *         cdef int right_child = left_child + 1
  * 
  */
   __pyx_v_left_child = ((2 * __pyx_v_parent) + 1);
@@ -1966,14 +1950,14 @@ static PyObject *__pyx_f_7sumtree_7SumTree__go_to_leaf(struct __pyx_obj_7sumtree
   /* "sumtree.pyx":97
  *         cdef int parent = 0
  *         cdef int left_child = 2*parent + 1
- *         cdef int right_child = 2*parent + 2             # <<<<<<<<<<<<<<
+ *         cdef int right_child = left_child + 1             # <<<<<<<<<<<<<<
  * 
  *         while parent < self.first_leaf_idx:
  */
-  __pyx_v_right_child = ((2 * __pyx_v_parent) + 2);
+  __pyx_v_right_child = (__pyx_v_left_child + 1);
 
   /* "sumtree.pyx":99
- *         cdef int right_child = 2*parent + 2
+ *         cdef int right_child = left_child + 1
  * 
  *         while parent < self.first_leaf_idx:             # <<<<<<<<<<<<<<
  *             if key <= self.tree[left_child]:
@@ -2179,8 +2163,8 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_8get(struct __pyx_obj_7sumtree_SumTr
  *         :return: Item storing in sumtree.
  *         """
  *         cdef int leaf_idx = self._go_to_leaf(key)             # <<<<<<<<<<<<<<
+ *         return self.items[leaf_idx - self.first_leaf_idx]
  * 
- *         print(leaf_idx)
  */
   __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_key); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 119, __pyx_L1_error)
   __pyx_t_2 = ((struct __pyx_vtabstruct_7sumtree_SumTree *)__pyx_v_self->__pyx_vtab)->_go_to_leaf(__pyx_v_self, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L1_error)
@@ -2189,49 +2173,16 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_8get(struct __pyx_obj_7sumtree_SumTr
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_leaf_idx = __pyx_t_1;
 
-  /* "sumtree.pyx":121
+  /* "sumtree.pyx":120
+ *         """
  *         cdef int leaf_idx = self._go_to_leaf(key)
- * 
- *         print(leaf_idx)             # <<<<<<<<<<<<<<
- *         print(leaf_idx - self.first_leaf_idx)
- *         print()
- */
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_leaf_idx); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_PrintOne(0, __pyx_t_2) < 0) __PYX_ERR(0, 121, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-  /* "sumtree.pyx":122
- * 
- *         print(leaf_idx)
- *         print(leaf_idx - self.first_leaf_idx)             # <<<<<<<<<<<<<<
- *         print()
- * 
- */
-  __pyx_t_2 = __Pyx_PyInt_From_int((__pyx_v_leaf_idx - __pyx_v_self->first_leaf_idx)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_PrintOne(0, __pyx_t_2) < 0) __PYX_ERR(0, 122, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-  /* "sumtree.pyx":123
- *         print(leaf_idx)
- *         print(leaf_idx - self.first_leaf_idx)
- *         print()             # <<<<<<<<<<<<<<
- * 
- *         return self.items[leaf_idx - self.first_leaf_idx]
- */
-  if (__Pyx_PrintOne(0, __pyx_empty_tuple) < 0) __PYX_ERR(0, 123, __pyx_L1_error)
-
-  /* "sumtree.pyx":125
- *         print()
- * 
  *         return self.items[leaf_idx - self.first_leaf_idx]             # <<<<<<<<<<<<<<
  * 
  *     def sample(self) -> object:
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = (__pyx_v_leaf_idx - __pyx_v_self->first_leaf_idx);
-  __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_self->items, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_self->items, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 120, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -2256,7 +2207,7 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_8get(struct __pyx_obj_7sumtree_SumTr
   return __pyx_r;
 }
 
-/* "sumtree.pyx":127
+/* "sumtree.pyx":122
  *         return self.items[leaf_idx - self.first_leaf_idx]
  * 
  *     def sample(self) -> object:             # <<<<<<<<<<<<<<
@@ -2290,19 +2241,19 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_10sample(struct __pyx_obj_7sumtree_S
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("sample", 0);
 
-  /* "sumtree.pyx":131
+  /* "sumtree.pyx":126
  *         :return: Random element form tree.
  *         """
  *         cdef int key = rand.randint(0, self.tree[0] - 1)             # <<<<<<<<<<<<<<
  *         return self.get(key)
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_rand); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_rand); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_randint); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_randint); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_long(((__pyx_v_self->tree[0]) - 1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_long(((__pyx_v_self->tree[0]) - 1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -2319,7 +2270,7 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_10sample(struct __pyx_obj_7sumtree_S
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_3)) {
     PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_int_0, __pyx_t_2};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -2328,14 +2279,14 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_10sample(struct __pyx_obj_7sumtree_S
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
     PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_int_0, __pyx_t_2};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   } else
   #endif
   {
-    __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 131, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 126, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     if (__pyx_t_4) {
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
@@ -2346,16 +2297,16 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_10sample(struct __pyx_obj_7sumtree_S
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_6, 1+__pyx_t_5, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 131, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 126, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_key = __pyx_t_5;
 
-  /* "sumtree.pyx":132
+  /* "sumtree.pyx":127
  *         """
  *         cdef int key = rand.randint(0, self.tree[0] - 1)
  *         return self.get(key)             # <<<<<<<<<<<<<<
@@ -2363,9 +2314,9 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_10sample(struct __pyx_obj_7sumtree_S
  *     def get_item_table(self) -> np.array:
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_key); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_key); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -2380,14 +2331,14 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_10sample(struct __pyx_obj_7sumtree_S
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_t_6) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_6);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "sumtree.pyx":127
+  /* "sumtree.pyx":122
  *         return self.items[leaf_idx - self.first_leaf_idx]
  * 
  *     def sample(self) -> object:             # <<<<<<<<<<<<<<
@@ -2410,7 +2361,7 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_10sample(struct __pyx_obj_7sumtree_S
   return __pyx_r;
 }
 
-/* "sumtree.pyx":134
+/* "sumtree.pyx":129
  *         return self.get(key)
  * 
  *     def get_item_table(self) -> np.array:             # <<<<<<<<<<<<<<
@@ -2437,7 +2388,7 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_12get_item_table(struct __pyx_obj_7s
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_item_table", 0);
 
-  /* "sumtree.pyx":139
+  /* "sumtree.pyx":134
  *         :return: Table storing items.
  *         """
  *         return self.items             # <<<<<<<<<<<<<<
@@ -2449,7 +2400,7 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_12get_item_table(struct __pyx_obj_7s
   __pyx_r = __pyx_v_self->items;
   goto __pyx_L0;
 
-  /* "sumtree.pyx":134
+  /* "sumtree.pyx":129
  *         return self.get(key)
  * 
  *     def get_item_table(self) -> np.array:             # <<<<<<<<<<<<<<
@@ -2464,7 +2415,7 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_12get_item_table(struct __pyx_obj_7s
   return __pyx_r;
 }
 
-/* "sumtree.pyx":141
+/* "sumtree.pyx":136
  *         return self.items
  * 
  *     def get_tree_table(self) -> np.array:             # <<<<<<<<<<<<<<
@@ -2500,34 +2451,34 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_14get_tree_table(struct __pyx_obj_7s
   int __pyx_t_7;
   __Pyx_RefNannySetupContext("get_tree_table", 0);
 
-  /* "sumtree.pyx":146
+  /* "sumtree.pyx":141
  *         :return: Table storing nodes values.
  *         """
  *         tree_table =np.empty((self.number_of_nodes,), dtype=int)             # <<<<<<<<<<<<<<
  *         for idx in range(self.number_of_nodes):
  *             tree_table[idx] = self.tree[idx]
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->number_of_nodes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->number_of_nodes); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_3);
   __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, ((PyObject *)(&PyInt_Type))) < 0) __PYX_ERR(0, 146, __pyx_L1_error)
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 146, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, ((PyObject *)(&PyInt_Type))) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -2535,7 +2486,7 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_14get_tree_table(struct __pyx_obj_7s
   __pyx_v_tree_table = __pyx_t_4;
   __pyx_t_4 = 0;
 
-  /* "sumtree.pyx":147
+  /* "sumtree.pyx":142
  *         """
  *         tree_table =np.empty((self.number_of_nodes,), dtype=int)
  *         for idx in range(self.number_of_nodes):             # <<<<<<<<<<<<<<
@@ -2547,19 +2498,19 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_14get_tree_table(struct __pyx_obj_7s
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
     __pyx_v_idx = __pyx_t_7;
 
-    /* "sumtree.pyx":148
+    /* "sumtree.pyx":143
  *         tree_table =np.empty((self.number_of_nodes,), dtype=int)
  *         for idx in range(self.number_of_nodes):
  *             tree_table[idx] = self.tree[idx]             # <<<<<<<<<<<<<<
  *         return tree_table
  */
-    __pyx_t_4 = __Pyx_PyInt_From_int((__pyx_v_self->tree[__pyx_v_idx])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 148, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_int((__pyx_v_self->tree[__pyx_v_idx])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 143, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_tree_table, __pyx_v_idx, __pyx_t_4, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 148, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_v_tree_table, __pyx_v_idx, __pyx_t_4, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 143, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
 
-  /* "sumtree.pyx":149
+  /* "sumtree.pyx":144
  *         for idx in range(self.number_of_nodes):
  *             tree_table[idx] = self.tree[idx]
  *         return tree_table             # <<<<<<<<<<<<<<
@@ -2569,7 +2520,7 @@ static PyObject *__pyx_pf_7sumtree_7SumTree_14get_tree_table(struct __pyx_obj_7s
   __pyx_r = __pyx_v_tree_table;
   goto __pyx_L0;
 
-  /* "sumtree.pyx":141
+  /* "sumtree.pyx":136
  *         return self.items
  * 
  *     def get_tree_table(self) -> np.array:             # <<<<<<<<<<<<<<
@@ -2891,8 +2842,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_dtype, __pyx_k_dtype, sizeof(__pyx_k_dtype), 0, 0, 1, 1},
   {&__pyx_n_s_empty, __pyx_k_empty, sizeof(__pyx_k_empty), 0, 0, 1, 1},
-  {&__pyx_n_s_end, __pyx_k_end, sizeof(__pyx_k_end), 0, 0, 1, 1},
-  {&__pyx_n_s_file, __pyx_k_file, sizeof(__pyx_k_file), 0, 0, 1, 1},
   {&__pyx_n_s_get, __pyx_k_get, sizeof(__pyx_k_get), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
@@ -2904,7 +2853,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_np, __pyx_k_np, sizeof(__pyx_k_np), 0, 0, 1, 1},
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
   {&__pyx_n_s_object, __pyx_k_object, sizeof(__pyx_k_object), 0, 0, 1, 1},
-  {&__pyx_n_s_print, __pyx_k_print, sizeof(__pyx_k_print), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
   {&__pyx_n_s_rand, __pyx_k_rand, sizeof(__pyx_k_rand), 0, 0, 1, 1},
   {&__pyx_n_s_randint, __pyx_k_randint, sizeof(__pyx_k_randint), 0, 0, 1, 1},
@@ -2922,7 +2870,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 45, __pyx_L1_error)
   __pyx_builtin_object = __Pyx_GetBuiltinName(__pyx_n_s_object); if (!__pyx_builtin_object) __PYX_ERR(0, 48, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 147, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 142, __pyx_L1_error)
   __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(1, 2, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -4728,112 +4676,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
     }
 }
 
-/* Print */
-#if !CYTHON_COMPILING_IN_PYPY && PY_MAJOR_VERSION < 3
-static PyObject *__Pyx_GetStdout(void) {
-    PyObject *f = PySys_GetObject((char *)"stdout");
-    if (!f) {
-        PyErr_SetString(PyExc_RuntimeError, "lost sys.stdout");
-    }
-    return f;
-}
-static int __Pyx_Print(PyObject* f, PyObject *arg_tuple, int newline) {
-    int i;
-    if (!f) {
-        if (!(f = __Pyx_GetStdout()))
-            return -1;
-    }
-    Py_INCREF(f);
-    for (i=0; i < PyTuple_GET_SIZE(arg_tuple); i++) {
-        PyObject* v;
-        if (PyFile_SoftSpace(f, 1)) {
-            if (PyFile_WriteString(" ", f) < 0)
-                goto error;
-        }
-        v = PyTuple_GET_ITEM(arg_tuple, i);
-        if (PyFile_WriteObject(v, f, Py_PRINT_RAW) < 0)
-            goto error;
-        if (PyString_Check(v)) {
-            char *s = PyString_AsString(v);
-            Py_ssize_t len = PyString_Size(v);
-            if (len > 0) {
-                switch (s[len-1]) {
-                    case ' ': break;
-                    case '\f': case '\r': case '\n': case '\t': case '\v':
-                        PyFile_SoftSpace(f, 0);
-                        break;
-                    default:  break;
-                }
-            }
-        }
-    }
-    if (newline) {
-        if (PyFile_WriteString("\n", f) < 0)
-            goto error;
-        PyFile_SoftSpace(f, 0);
-    }
-    Py_DECREF(f);
-    return 0;
-error:
-    Py_DECREF(f);
-    return -1;
-}
-#else
-static int __Pyx_Print(PyObject* stream, PyObject *arg_tuple, int newline) {
-    PyObject* kwargs = 0;
-    PyObject* result = 0;
-    PyObject* end_string;
-    if (unlikely(!__pyx_print)) {
-        __pyx_print = PyObject_GetAttr(__pyx_b, __pyx_n_s_print);
-        if (!__pyx_print)
-            return -1;
-    }
-    if (stream) {
-        kwargs = PyDict_New();
-        if (unlikely(!kwargs))
-            return -1;
-        if (unlikely(PyDict_SetItem(kwargs, __pyx_n_s_file, stream) < 0))
-            goto bad;
-        if (!newline) {
-            end_string = PyUnicode_FromStringAndSize(" ", 1);
-            if (unlikely(!end_string))
-                goto bad;
-            if (PyDict_SetItem(kwargs, __pyx_n_s_end, end_string) < 0) {
-                Py_DECREF(end_string);
-                goto bad;
-            }
-            Py_DECREF(end_string);
-        }
-    } else if (!newline) {
-        if (unlikely(!__pyx_print_kwargs)) {
-            __pyx_print_kwargs = PyDict_New();
-            if (unlikely(!__pyx_print_kwargs))
-                return -1;
-            end_string = PyUnicode_FromStringAndSize(" ", 1);
-            if (unlikely(!end_string))
-                return -1;
-            if (PyDict_SetItem(__pyx_print_kwargs, __pyx_n_s_end, end_string) < 0) {
-                Py_DECREF(end_string);
-                return -1;
-            }
-            Py_DECREF(end_string);
-        }
-        kwargs = __pyx_print_kwargs;
-    }
-    result = PyObject_Call(__pyx_print, arg_tuple, kwargs);
-    if (unlikely(kwargs) && (kwargs != __pyx_print_kwargs))
-        Py_DECREF(kwargs);
-    if (!result)
-        return -1;
-    Py_DECREF(result);
-    return 0;
-bad:
-    if (kwargs != __pyx_print_kwargs)
-        Py_XDECREF(kwargs);
-    return -1;
-}
-#endif
-
 /* CIntToPy */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
     const long neg_one = (long) ((long) 0 - (long) 1), const_zero = (long) 0;
@@ -5053,43 +4895,6 @@ raise_neg_overflow:
         "can't convert negative value to int");
     return (int) -1;
 }
-
-/* PrintOne */
-#if !CYTHON_COMPILING_IN_PYPY && PY_MAJOR_VERSION < 3
-static int __Pyx_PrintOne(PyObject* f, PyObject *o) {
-    if (!f) {
-        if (!(f = __Pyx_GetStdout()))
-            return -1;
-    }
-    Py_INCREF(f);
-    if (PyFile_SoftSpace(f, 0)) {
-        if (PyFile_WriteString(" ", f) < 0)
-            goto error;
-    }
-    if (PyFile_WriteObject(o, f, Py_PRINT_RAW) < 0)
-        goto error;
-    if (PyFile_WriteString("\n", f) < 0)
-        goto error;
-    Py_DECREF(f);
-    return 0;
-error:
-    Py_DECREF(f);
-    return -1;
-    /* the line below is just to avoid C compiler
-     * warnings about unused functions */
-    return __Pyx_Print(f, NULL, 0);
-}
-#else
-static int __Pyx_PrintOne(PyObject* stream, PyObject *o) {
-    int res;
-    PyObject* arg_tuple = PyTuple_Pack(1, o);
-    if (unlikely(!arg_tuple))
-        return -1;
-    res = __Pyx_Print(stream, arg_tuple, 1);
-    Py_DECREF(arg_tuple);
-    return res;
-}
-#endif
 
 /* CIntFromPy */
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
