@@ -30,19 +30,22 @@ cdef class SumTree:
     cdef int elements_in_tree
     cdef int number_of_nodes
     cdef int capacity
+    cdef int first_leaf_idx
     cdef int* tree
     cdef items
 
     def __cinit__(self, capacity: int):
+        self.capacity = capacity
         self.number_of_nodes = 2*capacity - 1
+        self.first_leaf_idx = self.number_of_nodes - self.capacity
+        self.elements_in_tree = 0
+
         self.tree = <int*> PyMem_Malloc(self.number_of_nodes * sizeof(int))
         if not self.tree:
             raise MemoryError()
         set_zero_in_c_table(self.tree, self.number_of_nodes)
 
-        self.elements_in_tree = 0
         self.items =  np.zeros((capacity, ), dtype=object)
-        self.capacity = capacity
 
     def __dealloc__(self):
         PyMem_Free(self.tree)
@@ -93,12 +96,12 @@ cdef class SumTree:
         cdef int left_child = 2*parent + 1
         cdef int right_child = 2*parent + 2
 
-        while parent >= self.capacity:
-            if key < self.tree[left_child]:
+        while parent < self.first_leaf_idx:
+            if key <= self.tree[left_child]:
                 parent = left_child
             else:
                 parent = right_child
-                key = self.tree[left_child] - key
+                key -= self.tree[left_child]
 
             left_child = 2*parent + 1
             right_child = 2*parent + 2
@@ -113,14 +116,14 @@ cdef class SumTree:
         :param key: Must be number from interval suitable for the given item. Interval maybe be changed during work.
         :return: Item storing in sumtree.
         """
-        cdef int item_idx = self._go_to_leaf(key)
-        return self.items[key]
+        cdef int leaf_idx = self._go_to_leaf(key)
+        return self.items[leaf_idx - self.first_leaf_idx]
 
     def sample(self) -> object:
         """
         :return: Random element form tree.
         """
-        cdef int key = rand.randint(0, self.tree[0])
+        cdef int key = rand.randint(0, self.tree[0] - 1)
         return self.get(key)
 
     def get_item_table(self) -> np.array:
@@ -139,4 +142,3 @@ cdef class SumTree:
         for idx in range(self.number_of_nodes):
             tree_table[idx] = self.tree[idx]
         return tree_table
-
