@@ -33,7 +33,6 @@ class Agent:
         self.history = []
 
     def _explore_env(self, batch_size: int, number_of_game: int = 10) -> Tuple[float, List[Sample]]:
-
         """ Return tuple of mean gain from all games and list of samples. """
         data = []
         gains = []
@@ -69,7 +68,6 @@ class Agent:
                 n_game += 1
             else:
                 state = next_state
-
             n_sample += 1
 
         self.environment.close()
@@ -89,32 +87,35 @@ class Agent:
         return q_values
 
     def learn(self, epochs: int,
-              batch_size: int,
+              batch_size_in_step: int,
+              min_n_game_in_exploration: int,
+              batch_size_in_exploration: int,
               change_model_delay: int):
 
         self.model.compile()
         self.current_model = self.model.clone()
         self.current_model.compile()
 
-        _, starting_experience = self._explore_env(self.memory.maxlen)
+        eval_score, starting_experience = self._explore_env(self.memory.maxlen)
         self.memory.add(starting_experience)
 
         history = []
         for epoch in tqdm(range(epochs), desc='Learning in progress: '):
 
-            #ToDo: Przenieść tu eksporacje
             if epoch % change_model_delay == 0:
                 self.model = self.current_model.clone()
                 self.model.compile()
                 if type(self.memory) == PrioritizedExperienceReplay:
                     self.memory.update_model(self.model)
+                eval_score, batch = self._explore_env(batch_size_in_exploration,
+                                                      min_n_game_in_exploration)
+                print(eval_score)
 
-            eval_score, batch = self._explore_env(batch_size)
-            self.memory.add(batch)
-            batch = self.memory.sample(batch_size)
+                self.memory.add(batch)
+            batch = self.memory.sample(batch_size_in_step)
 
             q_values = self._bellman_equation(batch)
             state = np.array([sample.state for sample in batch])
             loss = self.current_model.fit(state, q_values)
             history.append({'loss': loss, 'eval_score': eval_score})
-            print(eval_score)
+

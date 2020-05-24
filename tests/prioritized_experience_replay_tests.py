@@ -17,7 +17,6 @@ class PrioritizedExperienceReplayTests(unittest.TestCase):
         layer2 = K.layers.Dense(units=output_size)(layer1)
         return K.models.Model(input, layer2)
 
-
     def test_can_fit_model(self):
         """ This test check ability of fitting model in PER to random vector. """
         state_shape = (4, )
@@ -43,5 +42,3 @@ class PrioritizedExperienceReplayTests(unittest.TestCase):
 
         for idx, loss in enumerate(history_of_loss[:-1]):
             self.assertGreater(loss, history_of_loss[idx + 1])
-
-

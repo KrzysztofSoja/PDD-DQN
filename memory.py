@@ -37,7 +37,6 @@ class QueueMemory(AbstractMemory):
 class PrioritizedExperienceReplay(AbstractMemory):
 
     # ToDo: Dorobić k-step!!!
-    # ToDo: Czy warto implementować tu Double DQN
 
     def __init__(self, maxlen: int, model: Model, key_scaling: int, gamma: float):
         super(PrioritizedExperienceReplay, self).__init__(maxlen)
@@ -59,11 +58,12 @@ class PrioritizedExperienceReplay(AbstractMemory):
 
         return (predicted_value - q_value)**2
 
-    def add(self, samples: List[Sample]): #ToDo: Możeby nie dodawać elementów mniejszych na epsylon
+    def add(self, samples: List[Sample]):
         for sample in samples:
             key = self._loss_calculate(sample)
             key = int(key*self.key_scaling)
-            self.sumtree.add(key=key, item=sample)
+            if key > 0:
+                self.sumtree.add(key=key, item=sample)
 
     def update_model(self, model: Model):
         self.model = model
