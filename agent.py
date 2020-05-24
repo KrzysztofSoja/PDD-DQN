@@ -1,8 +1,9 @@
 import keras as K
 import numpy as np
+import random as rand
 
 from gym.core import Env
-from memory import AbstractMemory
+from memory import AbstractMemory, PrioritizedExperienceReplay
 from policy import AbstractPolicy
 from sample import Sample
 from model_wrapper import ModelWrapper
@@ -31,7 +32,8 @@ class Agent:
 
         self.history = []
 
-    def _explore_env(self, batch_size: int) -> Tuple[float, List[Sample]]:
+    def _explore_env(self, batch_size: int, number_of_game: int = 10) -> Tuple[float, List[Sample]]:
+
         """ Return tuple of mean gain from all games and list of samples. """
         data = []
         gains = []
@@ -39,11 +41,15 @@ class Agent:
         previous_sample = None
 
         current_gain = 0
-        for i in range(batch_size):
+        n_sample = 0
+        n_game = 0
+
+        while n_game <= number_of_game or n_sample <= batch_size:
             q_values = self.model.predict(state)
             action = self.policy(q_values)
 
             next_state, reward, done, _ = self.environment.step(action)
+
             current_gain += reward
 
             if previous_sample is None:
@@ -55,15 +61,19 @@ class Agent:
                 previous_sample = current_sample
 
             if done:
+                data.append(current_sample)
                 gains.append(current_gain)
                 current_gain = 0
                 previous_sample = None
                 state = self.environment.reset()
+                n_game += 1
             else:
                 state = next_state
 
+            n_sample += 1
+
         self.environment.close()
-        return np.mean(gains), data
+        return np.mean(gains), rand.sample(data, batch_size)
 
     def _bellman_equation(self, batch: List[Sample]) -> np.ndarray:
         state = np.array([sample.state for sample in batch])
@@ -92,9 +102,12 @@ class Agent:
         history = []
         for epoch in tqdm(range(epochs), desc='Learning in progress: '):
 
+            #ToDo: Przenieść tu eksporacje
             if epoch % change_model_delay == 0:
                 self.model = self.current_model.clone()
                 self.model.compile()
+                if type(self.memory) == PrioritizedExperienceReplay:
+                    self.memory.update_model(self.model)
 
             eval_score, batch = self._explore_env(batch_size)
             self.memory.add(batch)

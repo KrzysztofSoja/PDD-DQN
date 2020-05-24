@@ -12,14 +12,17 @@ class ModelWrapper:
     def compile(self):
         self.model.compile(loss='MSE', optimizer=self.optimizer)
 
-    def predict(self, x):
+    def predict(self, x: np.array) -> float:
         if len(x.shape) == 1:
             x = np.array([x])
         return self.model.predict(x, batch_size=x.shape[0])
 
-    def fit(self, x, y):
+    def fit(self, x: np.array, y: np.array) -> float:
         if len(x.shape) == 1:
             x = np.array([x])
+        if len(y.shape) == 1:
+            y = np.array([y])
+
         return self.model.train_on_batch(x, y)
 
     def clone(self) -> object:
