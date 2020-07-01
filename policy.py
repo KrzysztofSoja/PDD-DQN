@@ -26,7 +26,13 @@ class EpsGreedy(AbstractPolicy):
         self.eps_min = kwargs['eps_min']
 
     def __call__(self, q_values: np.ndarray) -> np.array:
-        if self.eps > self.eps_min and self.eps > rand.random():
+        if self.eps > rand.random():
             return np.random.randint(0, q_values.shape[0])
         else:
             return np.argmax(q_values)
+
+    def update(self):
+        if self.eps > self.eps_min:
+            self.eps *= self.eps_update
+        else:
+            self.eps = self.eps_min

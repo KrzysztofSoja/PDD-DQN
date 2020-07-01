@@ -38,12 +38,13 @@ class PrioritizedExperienceReplay(AbstractMemory):
 
     # ToDo: Dorobić k-step!!!
 
-    def __init__(self, maxlen: int, model: Model, key_scaling: int, gamma: float):
+    def __init__(self, maxlen: int, model: Model, gamma: float, alpha: float = 0.5, key_scaling: int = 1):
         super(PrioritizedExperienceReplay, self).__init__(maxlen)
         self.model = model
         self.sumtree = SumTree(capacity=maxlen)
         self.key_scaling = key_scaling
         self.gamma = gamma
+        self.alpha = alpha
 
     def sample(self, batch_size: int) -> List[Sample]:
         return [self.sumtree.sample() for _ in range(batch_size)]
@@ -61,10 +62,9 @@ class PrioritizedExperienceReplay(AbstractMemory):
     def add(self, samples: List[Sample]):
         for sample in samples:
             key = self._loss_calculate(sample)
-            key = int(key*self.key_scaling)
-            if key > 0:
-                self.sumtree.add(key=key, item=sample)
+            key **= self.alpha
+            key = min(int(key*self.key_scaling), 1)
+            self.sumtree.add(key=key, item=sample)
 
     def update_model(self, model: Model):
         self.model = model
-

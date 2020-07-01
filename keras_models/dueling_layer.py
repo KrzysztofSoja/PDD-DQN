@@ -3,14 +3,23 @@ import keras as K
 
 class DuelingLayer(K.layers.Layer):
 
-    def __init__(self, units: int, actions: int):
-        self.v_layer1 = K.layers.Dense(units=units)
+    def __init__(self, units: int, actions: int,
+                 kernel_regularizer: K.regularizers.Regularizer = None,
+                 activity_regularizer: K.regularizers.Regularizer = None):
+        self.v_layer1 = K.layers.Dense(units=units,
+                                       kernel_regularizer=kernel_regularizer,
+                                       activity_regularizer=activity_regularizer)
         self.v_activation = K.layers.LeakyReLU(alpha=0.3)
-        self.v_layer2 = K.layers.Dense(units=1, activation='linear', input_dim=units)
-
-        self.a_layer1 = K.layers.Dense(units=units)
+        self.v_layer2 = K.layers.Dense(units=1, activation='linear', input_dim=units,
+                                       kernel_regularizer=kernel_regularizer,
+                                       activity_regularizer=activity_regularizer)
+        self.a_layer1 = K.layers.Dense(units=units,
+                                       kernel_regularizer=kernel_regularizer,
+                                       activity_regularizer=activity_regularizer)
         self.a_activation = K.layers.LeakyReLU(alpha=0.3)
-        self.list_a = [K.layers.Dense(units=1, activation='linear', input_dim=units)
+        self.list_a = [K.layers.Dense(units=1, activation='linear', input_dim=units,
+                                      kernel_regularizer=kernel_regularizer,
+                                      activity_regularizer=activity_regularizer)
                        for _ in range(actions)]
 
         self.average = K.layers.Average()
