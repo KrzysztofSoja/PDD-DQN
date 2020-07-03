@@ -22,18 +22,18 @@ layer3 = K.layers.Dense(units=2, input_dim=4,
                         activity_regularizer=K.regularizers.l2(0.01))(activation2)
 model = K.models.Model(input, layer3)
 
-optimizer = K.optimizers.Adam(learning_rate=0.0005)
+optimizer = K.optimizers.Adam(learning_rate=0.001)
 
 policy = EpsGreedy(start_eps=1.0, eps_min=0.05, eps_update=0.97)
-memory = QueueMemory(maxlen=100_000)
+memory = QueueMemory(maxlen=30_000)
 agent = DQN(environment=environment,
             memory=memory,
             model=model,
             policy=policy,
-            gamma=0.99,
+            gamma=0.98,
             optimizer=optimizer,
             n_step=1)
 
-agent.learn(epochs=200_000, batch_size_in_step=32, change_model_delay=1000,
-            batch_size_in_exploration=2_000,
-            min_n_game_in_exploration=5)
+agent.learn(epochs=200_000, batch_size_in_step=512, change_model_delay=600,
+            batch_size_in_exploration=5_000,
+            min_n_game_in_exploration=10)
