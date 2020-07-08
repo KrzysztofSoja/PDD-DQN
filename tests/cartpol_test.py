@@ -4,7 +4,9 @@ import gym
 from agents.dqn import DQN
 from memory import QueueMemory
 from policy import EpsGreedy
+from logger import Logger
 
+logger = Logger(logdir_path='.')
 environment = gym.make('CartPole-v1')
 
 input = K.layers.Input(shape=(4,))
@@ -32,8 +34,9 @@ agent = DQN(environment=environment,
             policy=policy,
             gamma=0.98,
             optimizer=optimizer,
-            n_step=1)
+            n_step=1,
+            logger=logger)
 
-agent.learn(epochs=200_000, batch_size_in_step=512, change_model_delay=600,
+agent.learn(epochs=200_000, batch_size_in_step=512, change_model_delay=300,
             batch_size_in_exploration=5_000,
             min_n_game_in_exploration=10)

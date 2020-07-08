@@ -1,27 +1,35 @@
 import keras as K
+import random as rand
+import numpy as np
 
 from gym.core import Env
 from memory import AbstractMemory
 from policy import AbstractPolicy
 from model_wrapper import ModelWrapper
 from sample import Sample
+from logger import Logger
 
 from typing import Tuple, List
 
 
-class AbstractValueBasedAgent:
+class AbstractAgent:
 
     def __init__(self, environment: Env,
                  memory: AbstractMemory,
                  policy: AbstractPolicy,
-                 model: K.model,
-                 optimizer: K.optimizers.Optimizer):
+                 model: K.Model,
+                 optimizer: K.optimizers.Optimizer,
+                 logger: Logger):
         self.environment = environment
         self.memory = memory
         self.policy = policy
         self.model = ModelWrapper(model, optimizer)
+        self.logger = logger
 
         self.history = []
+
+        logger.create_settings_model_file(model)
+        logger.create_settings_agent_file(self)
 
     def _explore_env(self, batch_size: int, number_of_game: int = 10) -> Tuple[float, List[Sample]]:
         """ Return tuple of mean gain from all games and list of samples. """
@@ -61,9 +69,15 @@ class AbstractValueBasedAgent:
                 state = next_state
             n_sample += 1
 
+        self.environment.close()
+        return np.mean(gains), rand.sample(data, batch_size)
+
     def learn(self, epochs: int,
               batch_size_in_step: int,
               min_n_game_in_exploration: int,
               batch_size_in_exploration: int,
               change_model_delay: int):
         raise NotImplementedError
+
+    def __str__(self):
+        return 'a chuj ci w oko'
