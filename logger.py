@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import keras as K
+import os
 
 from typing import Dict
 
@@ -13,13 +14,13 @@ class Logger:
         self.mean_gain = []
 
         self.logdir_path = logdir_path
+        if not os.path.exists(self.logdir_path):
+            os.mkdir(self.logdir_path)
 
     def create_settings_model_file(self, model: K.Model):
-        def print_to_file(string: str):
-            path_to_file = self.logdir_path + '/model_summary.txt'
-            with open(path_to_file, 'w+') as file:
-                print(string, file=file)
-        model.summary(print_fn=print_to_file)
+        path_to_file = self.logdir_path + '/model_summary.txt'
+        with open(path_to_file, 'w+') as file:
+            model.summary(print_fn=lambda x: file.write(x))
 
     def create_settings_agent_file(self, agent):
         path_to_file = self.logdir_path + '/agent_summary.txt'

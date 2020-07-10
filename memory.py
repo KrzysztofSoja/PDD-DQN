@@ -19,6 +19,9 @@ class AbstractMemory:
     def add(self, samples: List[Sample]):
         raise NotImplementedError
 
+    def __str__(self):
+        raise NotImplementedError
+
 
 class QueueMemory(AbstractMemory):
 
@@ -32,6 +35,11 @@ class QueueMemory(AbstractMemory):
     def add(self, samples: List[Sample]):
         for sample in samples:
             self.queue.append(sample)
+
+    def __str__(self):
+        return "\n" \
+               "Queue Memory.\n" \
+               "Maximum capacity: " + str(self.queue.maxlen) + "\n\n"
 
 
 class PrioritizedExperienceReplay(AbstractMemory):
@@ -68,3 +76,10 @@ class PrioritizedExperienceReplay(AbstractMemory):
 
     def update_model(self, model: Model):
         self.model = model
+
+    def __str__(self):
+        return "\n" \
+               "Prioritized Experience Replay.\n"\
+               "Maximum capacity: " + str(self.sumtree.capacity) + "\n" \
+               "Scaling keys parameter: " + str(self.key_scaling) + "\n"\
+               "Alpha parameter (importance sampling scaling): " + str(self.gamma) + "\n"

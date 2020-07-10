@@ -23,14 +23,15 @@ class DQN(AbstractAgent):
                  optimizer: K.optimizers.Optimizer,
                  n_step: int = 1):
 
-        super(DQN, self).__init__(environment=environment, memory=memory, policy=policy,
-                                  model=model, optimizer=optimizer, logger=logger)
-
         self.model = ModelWrapper(model, optimizer)
+        #self.model.compile()
         self.current_model = None
 
         self.gamma = gamma
         self.n_step = n_step
+
+        super(DQN, self).__init__(environment=environment, memory=memory, policy=policy,
+                                  model=model, optimizer=optimizer, logger=logger)
 
     def _bellman_equation(self, batch: List[Sample]) -> np.ndarray:
         state = np.array([sample.state for sample in batch])
@@ -75,5 +76,14 @@ class DQN(AbstractAgent):
             loss = self.current_model.fit(state, q_values)
             self.policy.update()
             self.logger.add_event({'loss_value': loss, 'mean_gain': eval_score, 'epoch': epoch})
+
+    def __str__(self):
+        return "Agent: " + self.__class__.__name__ + "\n\n" + \
+               "Discount value: " + str(self.gamma) + "\n"\
+                "N-step: " + str(self.n_step) + "\n\n"\
+                "Environment:\n" + str(self.environment) + "\n\n" + \
+                "Memory:\n" + str(self.memory) + "\n" + \
+                "Policy:\n" + str(self.policy)
+
 
 

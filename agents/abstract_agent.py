@@ -80,4 +80,4 @@ class AbstractAgent:
         raise NotImplementedError
 
     def __str__(self):
-        return 'a chuj ci w oko'
+        raise NotImplementedError
